@@ -1,0 +1,23 @@
+This app is Dockerized and should easily run with a simple `docker-compose up`. The app will be hosted on http://localhost:8080.
+
+Otherwise, it's just a basic Phoenix app, using most of the auto-generated stuff from `mix phx.new` (default DB configuration will be in config/dev.exs, etc.).
+
+```
+npm --prefix=assets install
+mix deps.get
+mix do ecto.create, ecto.migrate # Setup the DB schema
+
+mix phx.server # Runs the server, will be hosted at http://localhost:4000
+mix test # If you want to run the tests
+```
+
+Most non-boilerplate code will be in `lib/url_shorten_web/live/page_live.ex`, `lib/url_shorten_web/controllers/redirect_controller.ex`, and `lib/url_shorten/shortener.ex`.
+Relevant test code will be in `/test/url_shorten_web/live/page_live_test.exs` and `/test/url_shorten/shortener_test.exs`.
+
+Things that could be improved:
+
+1. I made zero CSS edits and barely touched the HTML templates, so the project is just an Elixir flex. I should've tried a basic React frontend since y'all use React, but didn't in the interest of time.
+2. Slug generation is unsophisticated... collisions might be possible, I'm not sure.
+3. Probably should have used a different model name than Slug. `slug.url` and `slug.slug` are a bit awkward.
+
+Anyway. Looking forward to your review.
