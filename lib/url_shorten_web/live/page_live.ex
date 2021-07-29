@@ -21,7 +21,7 @@ defmodule UrlShortenWeb.PageLive do
       {:ok, slug} ->
         {:noreply,
          socket
-         |> assign(short_url: "/" <> slug.slug, url: "") |> IO.inspect}
+         |> assign(short_url: URI.to_string(socket.host_uri) <> "/" <> slug.slug, url: "")}
     end
   end
 end
