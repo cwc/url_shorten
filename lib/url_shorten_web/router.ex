@@ -18,7 +18,7 @@ defmodule UrlShortenWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
-    get "/go/:slug", RedirectController, :redirect_slug
+    get "/:slug", RedirectController, :redirect_slug
   end
 
   # Other scopes may use custom stacks.

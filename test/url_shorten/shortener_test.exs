@@ -86,7 +86,7 @@ defmodule UrlShorten.ShortenerTest do
 
     test "create_slug_for_url/1 creates a slug record for valid URLs" do
       {:ok, slug} = Shortener.create_slug_for_url("http://test")
-      assert slug.url == "https://test"
+      assert slug.url == "http://test"
       assert Shortener.get_url_for_slug(slug.slug) == "http://test"
     end
 

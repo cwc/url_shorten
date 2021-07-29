@@ -11,7 +11,7 @@ defmodule UrlShortenWeb.PageLiveTest do
 
     assert view
     |> element("form")
-    |> render_submit(%{url: url}) =~ "/go/" <> slug
+    |> render_submit(%{url: url}) =~ "/" <> slug
   end
 
   test "invalid URL error is displayed", %{conn: conn} do
