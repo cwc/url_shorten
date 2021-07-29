@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  web:
+    build: .
+    tty: true
+    stdin_open: true
+    command: mix do ecto.create, ecto.migrate, phx.server
+    environment:
+      - MIX_ENV
+      - DATABASE_URL=postgres://postgres:postgres@db/url_shorten_dev
+    ports:
+      - 8080:4000
+    # I could set this up to mount local code in the container for hot recompilation, but didn't bother for this example.
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres

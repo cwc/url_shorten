@@ -1,6 +1,8 @@
 use Mix.Config
 
 # Configure your database
+database_url = System.get_env("DATABASE_URL")
+if !database_url do
 config :url_shorten, UrlShorten.Repo,
   username: "postgres",
   password: "postgres",
@@ -8,6 +10,10 @@ config :url_shorten, UrlShorten.Repo,
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
+else
+  config :url_shorten, UrlShorten.Repo,
+  url: database_url
+end
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
