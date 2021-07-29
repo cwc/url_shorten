@@ -1,0 +1,27 @@
+<h1>Show Slug</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, UrlShortenWeb.SlugLive.FormComponent,
+    id: @slug.id,
+    title: @page_title,
+    action: @live_action,
+    slug: @slug,
+    return_to: Routes.slug_show_path(@socket, :show, @slug) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Slug:</strong>
+    <%= @slug.slug %>
+  </li>
+
+  <li>
+    <strong>Url:</strong>
+    <%= @slug.url %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.slug_show_path(@socket, :edit, @slug), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.slug_index_path(@socket, :index) %></span>
