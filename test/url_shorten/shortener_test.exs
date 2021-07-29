@@ -6,8 +6,8 @@ defmodule UrlShorten.ShortenerTest do
   describe "slugs" do
     alias UrlShorten.Shortener.Slug
 
-    @valid_attrs %{slug: "some slug", url: "some url"}
-    @update_attrs %{slug: "some updated slug", url: "some updated url"}
+    @valid_attrs %{slug: "slug", url: "http://google.com"}
+    @update_attrs %{slug: "slug", url: "https://google.com"}
     @invalid_attrs %{slug: nil, url: nil}
 
     def slug_fixture(attrs \\ %{}) do
@@ -31,8 +31,8 @@ defmodule UrlShorten.ShortenerTest do
 
     test "create_slug/1 with valid data creates a slug" do
       assert {:ok, %Slug{} = slug} = Shortener.create_slug(@valid_attrs)
-      assert slug.slug == "some slug"
-      assert slug.url == "some url"
+      assert slug.slug == "slug"
+      assert slug.url == "http://google.com"
     end
 
     test "create_slug/1 with invalid data returns error changeset" do
@@ -42,8 +42,8 @@ defmodule UrlShorten.ShortenerTest do
     test "update_slug/2 with valid data updates the slug" do
       slug = slug_fixture()
       assert {:ok, %Slug{} = slug} = Shortener.update_slug(slug, @update_attrs)
-      assert slug.slug == "some updated slug"
-      assert slug.url == "some updated url"
+      assert slug.slug == "slug"
+      assert slug.url == "https://google.com"
     end
 
     test "update_slug/2 with invalid data returns error changeset" do
@@ -61,6 +61,43 @@ defmodule UrlShorten.ShortenerTest do
     test "change_slug/1 returns a slug changeset" do
       slug = slug_fixture()
       assert %Ecto.Changeset{} = Shortener.change_slug(slug)
+    end
+
+    test "is_valid_url/1 validates HTTP(S) URLs" do
+      assert Shortener.is_valid_url("http://test")
+      assert Shortener.is_valid_url("https://test")
+      assert Shortener.is_valid_url("http://")
+      assert Shortener.is_valid_url("https://")
+    end
+
+    test "is_valid_url/1 invalidates non-HTTP(S) URLs" do
+      assert !Shortener.is_valid_url("ftp://test")
+      assert !Shortener.is_valid_url("test")
+    end
+
+    test "get_url_for_slug/1 returns a slug's URL" do
+      slug = slug_fixture()
+      assert Shortener.get_url_for_slug(slug.slug) == slug.url
+    end
+
+    test "get_url_for_slug/1 returns nil for non-existent slugs" do
+      assert Shortener.get_url_for_slug("not there") == nil
+    end
+
+    test "create_slug_for_url/1 creates a slug record for valid URLs" do
+      {:ok, slug} = Shortener.create_slug_for_url("http://test")
+      assert slug.url == "https://test"
+      assert Shortener.get_url_for_slug(slug.slug) == "http://test"
+    end
+
+    test "create_slug_for_url/1 returns an error for invalid URLs" do
+      {result, _} = Shortener.create_slug_for_url("invalid")
+      assert result == :error
+    end
+
+    test "generate_slug/1 creates a known hash for a string" do
+      # Not the most useful test, but would raise a flag if the algo changes unexpectedly
+      assert Shortener.generate_slug("test") == "sPAKCA"
     end
   end
 end
