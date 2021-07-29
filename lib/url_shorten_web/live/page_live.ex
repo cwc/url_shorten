@@ -1,4 +1,8 @@
 defmodule UrlShortenWeb.PageLive do
+  @moduledoc """
+  The only page in this example, PageLive manages the UI for inputting a URL to shorten, and displaying the last shortened URL.
+  """
+
   use UrlShortenWeb, :live_view
 
   @impl true
@@ -8,7 +12,7 @@ defmodule UrlShortenWeb.PageLive do
 
   @impl true
   def handle_event("shorten", %{"url" => url}, socket) do
-    case UrlShorten.Shortener.shorten_url(url) do
+    case UrlShorten.Shortener.create_slug_for_url(url) do
       {:error, err} ->
         {:noreply,
           socket

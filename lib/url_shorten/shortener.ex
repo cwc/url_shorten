@@ -8,6 +8,8 @@ defmodule UrlShorten.Shortener do
 
   alias UrlShorten.Shortener.Slug
 
+  @doc "Tests that a URL meets our validation requirements for slug generation."
+  @spec is_valid_url(String.t) :: boolean
   def is_valid_url(url) do
       case URI.parse(url) do
         %URI{scheme: "http"} -> true
@@ -18,7 +20,8 @@ defmodule UrlShorten.Shortener do
       end
   end
 
-  @doc "Returns the URL for the given slug, or nil if it doesn't exist."
+  @doc "Retrieves the URL for the given slug. Returns nil if it doesn't exist."
+  @spec get_url_for_slug(String.t) :: String.t | nil
   def get_url_for_slug(slug) do
     case Repo.one(from s in Slug, where: s.slug == ^slug) do
       nil -> nil
@@ -26,8 +29,13 @@ defmodule UrlShorten.Shortener do
     end
   end
 
-  # Creates a new slug record for the given URL.
-  def shorten_url(url) do
+  @doc """
+  Creates a new slug record for the given URL.
+
+  Slugs and URLs are unique in the DB, so this is actually an upsert.
+  """
+  @spec create_slug_for_url(String.t) :: {:ok, Slug.t} | {:error, String.t}
+  def create_slug_for_url(url) do
     case is_valid_url(url) do
       false -> {:error, "Invalid URL (only 'http(s)://' URLs are allowed)"}
       true ->
@@ -36,7 +44,12 @@ defmodule UrlShorten.Shortener do
     end
   end
 
-  # Naive way of generating unique slugs for a URL, that I pieced together from examples.
+  @doc """
+  Generates a slug string for a given URL.
+
+  This is naively thrown together based on examples I've seen and may not be adequate at scale.
+  """
+  @spec generate_slug(String.t) :: String.t
   def generate_slug(url) do
     url
     |> sha256
